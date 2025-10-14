@@ -6,7 +6,7 @@ The input to STGNET is a pre-processed count single cell matrix, with columns re
 ![STGNET-Pipeline](image/STGNET.png)
 # Environment Requirement
 1. `R version > 3.5`
-2. `Information about the operating environment can be found in the requirement. txt file。`
+2. `Information about the operating environment can be found in the requirement.txt file。`
 # Example to run scMultiGAN
 1. Data preprocessing process
 - `Rscript generate.data.R --expression_matrix_path "raw.txt" --file_suffix "txt" --label_file_path "label.txt"`
