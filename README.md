@@ -4,3 +4,7 @@ Regarding these issues, many methods for enhancing ST data have been proposed ba
 # Description
 The input to STGNET is a pre-processed count single cell matrix, with columns representing cells and rows representing genes. It's output is an imputed count matrix with the same dimension. The complete pipeline and the datasets used in the paper is described with the following image.
 ![STGNET-Pipeline](image/STGNET.png)
+# Example to run scMultiGAN
+## Data preprocessing process
+> - Rscript generate.data.R --expression_matrix_path "raw.txt" --file_suffix "txt" --label_file_path "label.txt"
+Running this code will generate input data for GAN network training and output two parameters required for training on the screen, img_size 和 ncls。
