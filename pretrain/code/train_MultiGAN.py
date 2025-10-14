@@ -1,0 +1,64 @@
+from __future__ import print_function, division
+import argparse
+from pathlib import Path
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+import torch
+from MultiGAN import scMultiGAN
+import Discriminator
+import Generator
+import pandas as pd
+import numpy as np
+import os
+import scanpy as sc
+from utiles import MyDataset_sc,ToTensor_sc
+from torch.nn.parallel import DataParallel
+from torch.utils.data.sampler import BatchSampler
+from sklearn.model_selection import KFold
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--epoch', type=int, default= 500)
+parser.add_argument('--batch-size', type=int, default=100)
+parser.add_argument('--save-interval', type=int, default=10)
+parser.add_argument('--tau', type=float, default=0)
+parser.add_argument('--alpha', type=float, default=.2)
+parser.add_argument('--lambd', type=float, default=10)
+parser.add_argument('--n-critic', type=int, default=5)
+parser.add_argument('--latent_dim', type=int, default=128)
+parser.add_argument('--d_file', type=str, default='../demo_data/sc_dataset10.csv', help='path of data file')
+parser.add_argument('--c_file', type=str, default='../demo_data/dataset10_sc_label.txt', help='path of cls file')
+parser.add_argument('--channels', type=int, default=1, help='number of image channels')
+parser.add_argument('--img_size', type=int, default=32, help='size of each image dimension')
+parser.add_argument('--ncls', type=int, default=122, help='number of clusters')
+parser.add_argument('--output_dir',type=str,default='../datasets12_sc_one',help='path of the project') # final  relu
+parser.add_argument('--checkpoint',type=str,default=None,help='path of the output_checkpoint')
+parser.add_argument('--lr',type=int,default=1e-4,help='Learning rate')
+parser.add_argument('--num-workers',type=int,default=1,help='number of cores for loading data')
+opt = parser.parse_args()
+cuda = torch.cuda.is_available()
+device = torch.device('cuda:0' if cuda else 'cpu')
+print("\n Using CUDA for training: {}".format(cuda))
+print("********************\n")
+Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+print("reading expression matrix and mask matrix form disk\n"+"****************")
+print("Expression matrix path is {}".format(opt.d_file))
+print("Mask matrix path is {}".format(opt.c_file))
+print("****************")
+transformed_dataset = MyDataset_sc(opt=opt,transform=transforms.Compose([ToTensor_sc()]))
+dataloader = DataLoader(transformed_dataset, batch_size=opt.batch_size,shuffle=True, num_workers=opt.num_workers,drop_last=True)
+print("Loading data: sucess!")
+print("*********************\n")
+data_gene = Generator.ConvDataGenerator(img_size=opt.img_size,ncls=opt.ncls,latent_dim=opt.latent_dim,channels=opt.channels).to(device)
+mask_gene = Generator.ConvMaskGenerator(img_size=opt.img_size,ncls=opt.ncls,latent_dim=opt.latent_dim,channels=opt.channels).to(device)
+data_critic = Discriminator.ConvCritic(img_size=opt.img_size,ncls=opt.ncls,channels=opt.channels).to(device)
+mask_critic = Discriminator.ConvCritic(img_size=opt.img_size,ncls=opt.ncls,channels=opt.channels).to(device)
+
+scMultiGAN(opt, data_gene, data_critic, data_loader=dataloader)
+
+
+
+
+
+
+
