@@ -17,7 +17,7 @@ from utiles import MyDataset,ToTensor,one_hot,mask_data,mkdir, MyDataset_sc,ToTe
 from torch.nn.parallel import DataParallel
 import scanpy as sc
 import numpy as np
-#os.environ["CUDA_VISIBLE_DEVICES"] = "5"s
+#os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epoch', type=int, default= 500)
