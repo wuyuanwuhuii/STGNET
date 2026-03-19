@@ -16,10 +16,13 @@ Running this code will generate input data for GAN network training and output t
 Here, we mainly obtain a pre trained weight parameter for use in the next stage. Meanwhile, there are many parameters available for modification here.
 3. Train MultiGAN_impute
 - `python pretrain/train_MultiGAN_impute.py`
-When the imputeronly parameter is used, load the imputer model of train_MultiGAN_impute.py to impute expression matrix.
-4. Data preprocess
+When the imputeronly parameter is used, load the imputer model of train_MultiGAN_impute.py to impute scRNA-seq expression matrix.
+4. Train MultiGAN_impute_st
+- `python pretrain/train_MultiGAN_impute_st.py`
+When the imputeronly parameter is used, load the imputer model of train_MultiGAN_impute.py to impute ST expression matrix.
+5. Data preprocess
 - `python finetune/data_process.py`
 This is to generate h5ad data for training purposes.
-5. Train finetune model
+6. Train finetune model
 - `python finetune/train.py`
 Effectively utilize the positional information in spatial transcriptome data to fine tune the interpolated data.
